@@ -2,7 +2,7 @@ query AlbumQuery ($offset: Int!) {
   album(id: "dTRydwXhGQgthi1r2cKFmg") {
     id,
     name,
-    photos(slice: { limit: 10, offset: $offset }) {
+    photos(slice: { limit: 12, offset: $offset }) {
       count
       records {
         urls {

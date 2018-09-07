@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="example.javatpoint.com.optionmenu.MainActivity">
+
+    <item
+        android:id="@+id/item1"
+        android:title="@string/small" />
+    <item
+        android:id="@+id/item2"
+        android:title="@string/small2x" />
+    <item
+        android:id="@+id/item3"
+        android:title="@string/medium" />
+    <item
+        android:id="@+id/item4"
+        android:title="@string/medium2x" />
+    <item
+        android:id="@+id/item5"
+        android:title="@string/large" />
+    <item
+        android:id="@+id/item6"
+        android:title="@string/large1x" />
+    <item
+        android:id="@+id/item7"
+        android:title="@string/large2x" />
+</menu>

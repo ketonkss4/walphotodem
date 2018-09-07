@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">walphotoedem</string>
+
+    // Photo Sizes
+    <string name="small">small</string>
+    <string name="small2x">small2x</string>
+    <string name="medium">medium</string>
+    <string name="medium2x">medium2x</string>
+    <string name="large">large</string>
+    <string name="large1x">large1x</string>
+    <string name="large2x">large2x</string>
 </resources>

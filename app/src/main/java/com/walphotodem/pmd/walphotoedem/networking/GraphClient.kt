@@ -9,14 +9,17 @@ import type.CustomType
 
 /**
  */
+
 class GraphClient {
 
-    private val COOKIE_HEADER = "Cookie"
+    companion object {
+        private const val COOKIE_HEADER = "Cookie"
+    }
 
     fun buildClient(): ApolloClient {
         val httpLoggingInterceptor = HttpLoggingInterceptor()
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-        val authInterceptor = { chain : Interceptor.Chain ->
+        val authInterceptor = { chain: Interceptor.Chain ->
             val original = chain.request()
             val request = original.newBuilder()
                     .header(COOKIE_HEADER, AUTH_COOKIE)
