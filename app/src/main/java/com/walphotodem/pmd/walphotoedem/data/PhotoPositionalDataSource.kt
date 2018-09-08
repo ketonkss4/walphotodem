@@ -3,13 +3,14 @@ package com.walphotodem.pmd.walphotoedem.data
 import AlbumQuery
 import android.arch.lifecycle.MutableLiveData
 import android.arch.paging.PositionalDataSource
-import android.util.Log
 import com.apollographql.apollo.ApolloCall
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
 
 /**
+ * This class acts as the data source to the pagedListAdapter
+ * by making the necessary web service requests and handling paging
  */
 class PhotoPositionalDataSource(private val apolloClient: ApolloClient) :
         PositionalDataSource<AlbumQuery.Record>() {
@@ -20,6 +21,7 @@ class PhotoPositionalDataSource(private val apolloClient: ApolloClient) :
             params: LoadInitialParams,
             callback: LoadInitialCallback<AlbumQuery.Record>
     ) {
+
         val startPosition = if (params.requestedStartPosition <= 0) {
             params.requestedStartPosition
         } else {
@@ -50,7 +52,6 @@ class PhotoPositionalDataSource(private val apolloClient: ApolloClient) :
             params: LoadRangeParams,
             callback: LoadRangeCallback<AlbumQuery.Record>
     ) {
-        Log.e("OffSet", params.startPosition.toString())
         val albumQuery = setAlbumQueryOffset(params.startPosition)
         //load next page of results and update data
         apolloClient.query(albumQuery).enqueue(object : ApolloCall.Callback<AlbumQuery.Data>() {

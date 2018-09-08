@@ -4,7 +4,6 @@ import AlbumQuery
 import android.arch.paging.PagedListAdapter
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +29,6 @@ class PhotoGridAdapter(private val photoSizeSelectionHelper: PhotoSizeSelectionH
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val photoSizeSelection = photoSizeSelectionHelper.getPhotoSizeSelection()
-        Log.e("PhotoSizeSelection: ", photoSizeSelection)
         val photo = getItem(position)?.urls()?.filter {
             it.size_code() == photoSizeSelection
         }?.first()

@@ -1,6 +1,7 @@
 package com.walphotodem.pmd.walphotoedem.Util
 
 /**
+ * This class maintains the photo size preference selected by the user
  */
 class PhotoSizeSelectionHelper {
 

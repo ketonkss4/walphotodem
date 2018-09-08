@@ -10,6 +10,8 @@ val DIFF_CALLBACK: DiffUtil.ItemCallback<AlbumQuery.Record> = object : DiffUtil.
 
     // Check if items represent the same thing.
     override fun areItemsTheSame(oldItem: AlbumQuery.Record, newItem: AlbumQuery.Record): Boolean {
+        //since there is no ID field on the Record items
+        //the unique photo id appended to the end of the url is used
         val oldItemUrl = oldItem.urls()?.first()?.url()
         val oldItemId = oldItemUrl?.split("/")?.last()
         val newItemUrl = newItem.urls()?.first()?.url()

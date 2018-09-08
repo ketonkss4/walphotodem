@@ -11,7 +11,7 @@ class PhotoApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        apolloClient = GraphClient().buildClient()
+        apolloClient = GraphClient().buildClient(applicationContext)
     }
 
 }
