@@ -4,6 +4,7 @@ import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.Observer
 import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
+import android.support.v4.widget.SwipeRefreshLayout
 import com.apollographql.apollo.ApolloClient
 import com.walphotodem.pmd.walphotoedem.adapter.PhotoGridAdapter
 import com.walphotodem.pmd.walphotoedem.data.DataSourceFactory
@@ -14,9 +15,10 @@ import com.walphotodem.pmd.walphotoedem.data.RequestFailure
  * a PhotoGridAdapter. Sets up the data source for the adapter
  */
 class GalleryPresenter(
-        private val apolloClient: ApolloClient,
+        apolloClient: ApolloClient,
         private val failedRequestListener: OnFailedRequestListener
 ) {
+    private val dataSourceFactory = DataSourceFactory(apolloClient)
 
 
     interface OnFailedRequestListener {
@@ -33,7 +35,6 @@ class GalleryPresenter(
         val pagedListConfig = createPagedListConfig()
 
 
-        val dataSourceFactory = DataSourceFactory(apolloClient)
         val liveData = LivePagedListBuilder(
                 dataSourceFactory,
                 pagedListConfig
@@ -62,6 +63,16 @@ class GalleryPresenter(
                 .setPrefetchDistance(PREFETCH_DISTANCE)
                 .setEnablePlaceholders(false)
                 .build()
+    }
+
+    fun setupPullToRefreshListener(swipeContainer: SwipeRefreshLayout, photoGridAdapter: PhotoGridAdapter) {
+        swipeContainer.setOnRefreshListener {
+            dataSourceFactory.photoLiveData.value?.invalidate()
+        }
+    }
+
+    fun refresh(){
+        dataSourceFactory.photoLiveData.value?.invalidate()
     }
 
 }

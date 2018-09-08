@@ -3,6 +3,7 @@ package com.walphotodem.pmd.walphotoedem
 import android.content.res.Configuration
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -13,6 +14,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ProgressBar
 import com.walphotodem.pmd.walphotoedem.Util.PhotoSizeSelectionHelper
+import com.walphotodem.pmd.walphotoedem.Util.PhotoSizeSelectionHelper.Companion.SIZE_STATE_KEY
 import com.walphotodem.pmd.walphotoedem.adapter.PhotoGridAdapter
 import com.walphotodem.pmd.walphotoedem.data.RequestFailure
 import com.walphotodem.pmd.walphotoedem.presenter.GalleryPresenter
@@ -26,6 +28,7 @@ class MainActivity : AppCompatActivity(), GalleryPresenter.OnFailedRequestListen
     private lateinit var photoListView: RecyclerView
     private lateinit var galleryPresenter: GalleryPresenter
     private lateinit var progressBar: ProgressBar
+    private lateinit var swipeContainer: SwipeRefreshLayout
     private val photoSizeSelectionHelper: PhotoSizeSelectionHelper = PhotoSizeSelectionHelper()
     private val photoGridAdapter = PhotoGridAdapter(photoSizeSelectionHelper)
 
@@ -33,15 +36,13 @@ class MainActivity : AppCompatActivity(), GalleryPresenter.OnFailedRequestListen
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.photo_grid)
+        restorePhotoSizeSelection(savedInstanceState)
         photoListView = findViewById(R.id.photo_grid)
         progressBar = findViewById(R.id.progress_bar)
-
-
-        val layoutManager = if (isLandScape()) {
-            GridLayoutManager(this, 6)
-        } else {
-            GridLayoutManager(this, 3)
-        }
+        swipeContainer = findViewById(R.id.swipeContainer)
+        setRefreshColorScheme(swipeContainer)
+        showProgressIndicator()
+        val layoutManager = setSizeAndOrientationBasedLayoutManager()
 
         photoListView.layoutManager = layoutManager
         photoListView.adapter = photoGridAdapter
@@ -52,12 +53,39 @@ class MainActivity : AppCompatActivity(), GalleryPresenter.OnFailedRequestListen
                 photoGridAdapter,
                 this
         )
+        galleryPresenter.setupPullToRefreshListener(swipeContainer, photoGridAdapter)
 
         photoGridAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                dismissProgressIndicator()
+                dismissPullToRefreshIndicator()
+                if (itemCount != 0) dismissProgressIndicator()
             }
+
+
         })
+    }
+
+    /**
+     * This method returns a layout manager based on photo size and
+     * orientation
+     */
+    private fun setSizeAndOrientationBasedLayoutManager(): GridLayoutManager {
+        val layoutManager = GridLayoutManager(this, 12)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return when (photoSizeSelectionHelper.getPhotoSizeSelection()) {
+                    getString(R.string.small),
+                    getString(R.string.small2x) -> if (isLandScape()) 1 else 2
+                    getString(R.string.medium) -> if (isLandScape()) 2 else 4
+                    getString(R.string.medium2x) -> if (isLandScape()) 3 else 6
+                    getString(R.string.large),
+                    getString(R.string.large1x),
+                    getString(R.string.large2x) -> if (isLandScape()) 6 else 12
+                    else -> if (isLandScape()) 2 else 4
+                }
+            }
+        }
+        return layoutManager
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -67,15 +95,20 @@ class MainActivity : AppCompatActivity(), GalleryPresenter.OnFailedRequestListen
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         photoSizeSelectionHelper.setPhotoSizeSelection(item.title.toString())
-
+        galleryPresenter.refresh()
         return super.onOptionsItemSelected(item)
     }
 
     private fun isLandScape() =
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
+    /**
+     * This method is invoked on failed photo album request and pops a
+     * snackBar display to the user with option to retry
+     */
     override fun onFailedRequest(requestFailure: RequestFailure) {
         dismissProgressIndicator()
+        dismissPullToRefreshIndicator()
         Snackbar.make(
                 findViewById<View>(android.R.id.content),
                 requestFailure.errorMsg.toString(),
@@ -88,11 +121,31 @@ class MainActivity : AppCompatActivity(), GalleryPresenter.OnFailedRequestListen
                 }.show()
     }
 
+    private fun dismissPullToRefreshIndicator() {
+        if (swipeContainer.isRefreshing) swipeContainer.isRefreshing = false
+    }
+
     private fun showProgressIndicator() {
         progressBar.visibility = VISIBLE
     }
 
     private fun dismissProgressIndicator() {
         progressBar.visibility = GONE
+    }
+
+    private fun setRefreshColorScheme(swipeContainer: SwipeRefreshLayout) {
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString(SIZE_STATE_KEY, photoSizeSelectionHelper.getPhotoSizeSelection())
+        super.onSaveInstanceState(outState)
+    }
+
+    private fun restorePhotoSizeSelection(savedInstanceState: Bundle?) {
+        photoSizeSelectionHelper.setPhotoSizeSelection(savedInstanceState?.getString(SIZE_STATE_KEY))
     }
 }

@@ -20,8 +20,6 @@ class PhotoPositionalDataSource(private val apolloClient: ApolloClient) :
             params: LoadInitialParams,
             callback: LoadInitialCallback<AlbumQuery.Record>
     ) {
-        Log.e("Initial OffSet", params.requestedStartPosition.toString())
-
         val startPosition = if (params.requestedStartPosition <= 0) {
             params.requestedStartPosition
         } else {
@@ -33,7 +31,7 @@ class PhotoPositionalDataSource(private val apolloClient: ApolloClient) :
         apolloClient.query(albumQuery).enqueue(object : ApolloCall.Callback<AlbumQuery.Data>() {
             override fun onResponse(response: Response<AlbumQuery.Data>) {
                 val records = response.data()?.album()?.photos()?.records()
-                records?.let { callback.onResult(it, params.requestedStartPosition) }
+                records?.let { callback.onResult(it, startPosition) }
             }
 
             override fun onFailure(e: ApolloException) {

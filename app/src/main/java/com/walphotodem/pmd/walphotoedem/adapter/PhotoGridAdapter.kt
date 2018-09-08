@@ -44,6 +44,7 @@ class PhotoGridAdapter(private val photoSizeSelectionHelper: PhotoSizeSelectionH
         Picasso.with(context)
                 .load(photoUrl)
                 .into(imageView)
+
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
