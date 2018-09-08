@@ -13,6 +13,8 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ProgressBar
+import app.PhotoApp
+import com.walphotodem.pmd.walphotoedem.Util.GridSpanUtil
 import com.walphotodem.pmd.walphotoedem.Util.PhotoSizeSelectionHelper
 import com.walphotodem.pmd.walphotoedem.Util.PhotoSizeSelectionHelper.Companion.SIZE_STATE_KEY
 import com.walphotodem.pmd.walphotoedem.adapter.PhotoGridAdapter
@@ -73,16 +75,10 @@ class MainActivity : AppCompatActivity(), GalleryPresenter.OnFailedRequestListen
         val layoutManager = GridLayoutManager(this, 12)
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                return when (photoSizeSelectionHelper.getPhotoSizeSelection()) {
-                    getString(R.string.small),
-                    getString(R.string.small2x) -> if (isLandScape()) 1 else 2
-                    getString(R.string.medium) -> if (isLandScape()) 2 else 4
-                    getString(R.string.medium2x) -> if (isLandScape()) 3 else 6
-                    getString(R.string.large),
-                    getString(R.string.large1x),
-                    getString(R.string.large2x) -> if (isLandScape()) 6 else 12
-                    else -> if (isLandScape()) 2 else 4
-                }
+                return GridSpanUtil().configureGridSpan(
+                        isLandscape(),
+                        photoSizeSelectionHelper.getPhotoSizeSelection()
+                )
             }
         }
         return layoutManager
@@ -99,7 +95,7 @@ class MainActivity : AppCompatActivity(), GalleryPresenter.OnFailedRequestListen
         return super.onOptionsItemSelected(item)
     }
 
-    private fun isLandScape() =
+    private fun isLandscape() =
             resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     /**
