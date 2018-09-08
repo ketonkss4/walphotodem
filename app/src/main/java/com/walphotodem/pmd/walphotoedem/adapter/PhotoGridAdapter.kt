@@ -13,6 +13,7 @@ import com.walphotodem.pmd.walphotoedem.R
 import com.walphotodem.pmd.walphotoedem.Util.PhotoSizeSelectionHelper
 import com.walphotodem.pmd.walphotoedem.models.DIFF_CALLBACK
 
+
 /**
  * PhotoGridAdapter extends PagedListAdapter to support the paging functionality
  * recently introduced by google abstracting away paging complexity greatly simplifying
@@ -21,6 +22,10 @@ import com.walphotodem.pmd.walphotoedem.models.DIFF_CALLBACK
 
 class PhotoGridAdapter(private val photoSizeSelectionHelper: PhotoSizeSelectionHelper) :
         PagedListAdapter<AlbumQuery.Record, PhotoGridAdapter.ViewHolder>(DIFF_CALLBACK) {
+
+    init {
+        setHasStableIds(true)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.photo_view, null)
@@ -36,6 +41,14 @@ class PhotoGridAdapter(private val photoSizeSelectionHelper: PhotoSizeSelectionH
         if (photo != null) {
             photo.url()?.let { holder.bind(it) }
         }
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return position
     }
 
     private fun loadPhotoIntoView(context: Context, imageView: ImageView, photoUrl: String) {

@@ -12,6 +12,7 @@ import type.CustomType
 
 
 /**
+ * This class builds the Apollo Client for network requests
  */
 
 class GraphClient {
@@ -36,9 +37,9 @@ class GraphClient {
             chain.proceed(request)
         }
         val okHttpClient = OkHttpClient.Builder()
-// Apollo Caching will now work when Http Logging is set as normal interceptor team will fix
-// in future hopefully
-// https://github.com/apollographql/apollo-android/issues/638
+                // Apollo Caching will not work when Http Logging is set as normal
+                // interceptor team will fix in future hopefully
+                // https://github.com/apollographql/apollo-android/issues/638
                 .addNetworkInterceptor(httpLoggingInterceptor)
                 .addInterceptor(authInterceptor)
                 .build()

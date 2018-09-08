@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity(), GalleryPresenter.OnFailedRequestListen
         setContentView(R.layout.photo_grid)
         restorePhotoSizeSelection(savedInstanceState)
         photoListView = findViewById(R.id.photo_grid)
+        setupListViewOptimizations()
         progressBar = findViewById(R.id.progress_bar)
         swipeContainer = findViewById(R.id.swipeContainer)
         setRefreshColorScheme(swipeContainer)
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity(), GalleryPresenter.OnFailedRequestListen
                 photoGridAdapter,
                 this
         )
-        galleryPresenter.setupPullToRefreshListener(swipeContainer, photoGridAdapter)
+        galleryPresenter.setupPullToRefreshListener(swipeContainer)
 
         photoGridAdapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
@@ -65,6 +66,12 @@ class MainActivity : AppCompatActivity(), GalleryPresenter.OnFailedRequestListen
 
 
         })
+    }
+
+    private fun setupListViewOptimizations() {
+        photoListView.setHasFixedSize(true)
+        photoListView.setItemViewCacheSize(20)
+        photoListView.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH;
     }
 
     /**

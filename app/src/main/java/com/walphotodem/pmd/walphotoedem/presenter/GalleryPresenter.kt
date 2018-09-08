@@ -65,7 +65,7 @@ class GalleryPresenter(
                 .build()
     }
 
-    fun setupPullToRefreshListener(swipeContainer: SwipeRefreshLayout, photoGridAdapter: PhotoGridAdapter) {
+    fun setupPullToRefreshListener(swipeContainer: SwipeRefreshLayout) {
         swipeContainer.setOnRefreshListener {
             dataSourceFactory.photoLiveData.value?.invalidate()
         }

@@ -6,6 +6,7 @@ import android.arch.paging.DataSource
 import com.apollographql.apollo.ApolloClient
 
 /**
+ * Factory class for PhotoPositionalDataSource
  */
 class DataSourceFactory(private val apolloClient: ApolloClient) : DataSource.Factory<Int, AlbumQuery.Record>(){
     val photoLiveData : MutableLiveData<PhotoPositionalDataSource> = MutableLiveData()

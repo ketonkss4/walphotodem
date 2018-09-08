@@ -17,6 +17,9 @@ class PhotoPositionalDataSource(private val apolloClient: ApolloClient) :
 
     val requestFailureLiveData: MutableLiveData<RequestFailure> = MutableLiveData()
 
+    /**
+     * loads initial data request
+     */
     override fun loadInitial(
             params: LoadInitialParams,
             callback: LoadInitialCallback<AlbumQuery.Record>

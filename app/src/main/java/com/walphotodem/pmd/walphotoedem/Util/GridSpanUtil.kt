@@ -1,6 +1,7 @@
 package com.walphotodem.pmd.walphotoedem.Util
 
 /**
+ * This class abstracts the spanning logic from the activity class
  */
 class GridSpanUtil {
     fun configureGridSpan(isLandscape: Boolean, photoSize: String?) : Int {
